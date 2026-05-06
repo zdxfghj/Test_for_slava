@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Главная страница тестирование{% endblock %}</title>
+    <style>
+        .section-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: #1e3c72;
+    margin-bottom: 20px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #e8e8e8;
+    letter-spacing: 0.5px;
+}
+
+/* ========== ГРУППА INPUT + LABEL ========== */
+.input-group {
+    margin-bottom: 18px;
+}
+
+.input-group label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: #495057;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 6px;
+    transition: color 0.2s;
+}
+
+/* ========== САМ ИНПУТ ========== */
+.input-group input {
+    width: 100%;
+    height: 46px;
+    padding: 10px 16px;
+    font-size: 15px;
+    color: #2c3e50;
+    background: #f8f9fa;
+    border: 2px solid #e0e0e0;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+    outline: none;
+    letter-spacing: 0.3px;
+}
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .timer {
+            font-size: 48px;
+            font-weight: bold;
+            font-family: 'Courier New', monospace;
+            background: rgba(255, 255, 255, 0.2);
+            display: inline-block;
+            padding: 10px 30px;
+            border-radius: 50px;
+            margin-top: 10px;
+            backdrop-filter: blur(10px);
+        }
+
+        .timer.warning {
+            background: rgba(255, 193, 7, 0.3);
+            color: #ffc107;
+        }
+
+        .timer.danger {
+            background: rgba(220, 53, 69, 0.3);
+            color: #dc3545;
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .info-bar {
+            background: #f8f9fa;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .progress {
+            font-size: 16px;
+            color: #495057;
+        }
+
+        .badge {
+            background: #28a745;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+        }
+
+        .quiz-content {
+            padding: 30px;
+            max-height: 60vh;
+            overflow-y: auto;
+        }
+
+        .question {
+            background: #f8f9fa;
+            border-left: 4px solid #1e3c72;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 25px;
+            transition: all 0.3s;
+        }
+
+        .question:hover {
+            box-shadow: 0 5px 15px rgba(30, 60, 114, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .question p {
+            font-size: 16px;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+
+        .options {
+            list-style: none;
+        }
+
+        .options li {
+            margin-bottom: 12px;
+            padding: 10px 15px;
+            background: white;
+            border-radius: 8px;
+            border: 1px solid #dee2e6;
+            transition: all 0.2s;
+        }
+
+        .options li:hover {
+            background: #e8f4fd;
+            border-color: #1e3c72;
+        }
+
+        .options input[type="radio"] {
+            margin-right: 12px;
+            transform: scale(1.2);
+            cursor: pointer;
+        }
+
+        .options label {
+            cursor: pointer;
+            font-size: 15px;
+            color: #495057;
+            flex: 1;
+        }
+        /* Стиль для правильных ответов после завершения */
+
+        .correct-answer {
+            background: #d4edda !important;
+            border-left: 4px solid #28a745 !important;
+        }
+
+        .correct-option {
+            background: #c3e6cb !important;
+            border-color: #28a745 !important;
+            font-weight: bold;
+        }
+
+        .correct-option label {
+            color: #155724 !important;
+            font-weight: bold;
+        }
+        /* Стиль для неправильных ответов после завершения */
+
+        .incorrect-answer {
+            background: #f8d7da !important;
+            border-left: 4px solid #dc3545 !important;
+        }
+
+        .incorrect-option {
+            background: #f5c6cb !important;
+            border-color: #dc3545 !important;
+        }
+
+        .incorrect-option label {
+            color: #721c24 !important;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 18px;
+            font-weight: 600;
+            border-radius: 50px;
+            cursor: pointer;
+            display: block;
+            margin: 20px auto 30px;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(30, 60, 114, 0.4);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(30, 60, 114, 0.6);
+        }
+
+        .btn:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .result {
+            text-align: center;
+            padding: 40px;
+            border-radius: 15px;
+            margin: 20px;
+        }
+
+        .result.excellent {
+            background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+        }
+
+        .result.good {
+            background: linear-gradient(135deg, #d1ecf1 0%, #bee5eb 100%);
+        }
+
+        .result.satisfactory {
+            background: linear-gradient(135deg, #fff3cd 0%, #ffe8a1 100%);
+        }
+
+        .result.unsatisfactory {
+            background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+        }
+
+        .result h2 {
+            font-size: 36px;
+            margin-bottom: 15px;
+        }
+
+        .result.excellent h2 {
+            color: #155724;
+        }
+
+        .result.good h2 {
+            color: #0c5460;
+        }
+
+        .result.satisfactory h2 {
+            color: #856404;
+        }
+
+        .result.unsatisfactory h2 {
+            color: #721c24;
+        }
+
+        .result .score {
+            font-size: 48px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .result.excellent .score {
+            color: #28a745;
+        }
+
+        .result.good .score {
+            color: #17a2b8;
+        }
+
+        .result.satisfactory .score {
+            color: #ffc107;
+        }
+
+        .result.unsatisfactory .score {
+            color: #dc3545;
+        }
+
+        .result .grade {
+            font-size: 32px;
+            font-weight: bold;
+            margin-top: 10px;
+            text-transform: uppercase;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 50px;
+            font-size: 18px;
+            color: #1e3c72;
+        }
+
+        .loading:after {
+            content: '...';
+            animation: dots 1.5s steps(4, end) infinite;
+        }
+
+        @keyframes dots {
+            0%,
+            20% {
+                content: '.';
+            }
+            40% {
+                content: '..';
+            }
+            60%,
+            100% {
+                content: '...';
+            }
+        }
+
+        .error {
+            text-align: center;
+            padding: 50px;
+            color: #dc3545;
+            font-size: 18px;
+        }
+
+        .footer {
+            background: #f8f9fa;
+            padding: 15px;
+            text-align: center;
+            color: #6c757d;
+            font-size: 12px;
+            border-top: 1px solid #dee2e6;
+        }
+    </style>
+</head>
+
+<body>
+<div class="container">
+    <div class="header">
+        <h1>📚 Тест: Основы кибербезопасности</h1>
+        <div class="timer" id="timer">10:00</div>
+    </div>
+    <div class="info-bar">
+        <span class="progress" id="progress">Загрузка вопросов...</span>
+        <span class="badge" id="questionCount">0/20</span>
+    </div>
+
+    <div id="quiz-container" class="quiz-content">
+        <div class="loading">Загрузка теста</div>
+    </div>
+
+
+    <button id="submitBtn" class="btn" onclick="calculateScore()">Показать предварительный результат</button>
+
+    <div id="result" style="display: none;">
+
+
+    </div>
+
+    <div id="quiz-container-2" class="quiz-content">
+        <div class="question" id="0">
+            <p class="section-title">Раздел 2</p>
+
+
+        </div>
+
+        <div class="question " id="q-9"><p>1. К обстоятельствам, отягчающим административную
+            ответственность, относятся:</p>
+            <ul class="options" id="options-9">
+                <li id="opt-9-0"><input type="radio" name="q9" value="0" id="q9o0"><label for="q9o0">A. совершение
+                    административного правонарушения повторно</label></li>
+                <li id="opt-9-1"><input type="radio" name="q9" value="1" id="q9o1"><label for="q9o1">B. вовлечение
+                    несовершеннолетнего в административное правонарушение</label></li>
+                <li id="opt-9-2"><input type="radio" name="q9" value="2" id="q9o2"><label for="q9o2">C. совершение
+                    административного правонарушения группой лиц</label></li>
+                <li id="opt-9-3"><input type="radio" name="q9" value="3" id="q9o3"><label
+                        for="q9o3">D. все вышеперечисленные.</label></li>
+            </ul>
+
+        </div>
+
+        <div class="question" id="link_card_select">
+
+        </div>
+    </div>
+
+    <div class="footer">
+
+    </div>
+</div>
+
+        <script>
+                // ==================== Глобальные переменные ====================
+                const questions = {{ questions_json|safe }};
+                let timeLeft = 600; // 10 минут в секундах
+                let timerInterval;
+                let testCompleted = false;
+
+                // ==================== Отрисовка теста ====================
+                function renderQuiz() {
+                    let html = '';
+                    html += `
+                    <div class="question" id="0">
+                        <p class="section-title">Раздел 1</p>
+                        <div class="input-group">
+                            <label for="fio">ФИО</label>
+                            <input type="text" name="fio" id="fio" placeholder="Фамилия Имя Отчество">
+                        </div>
+                        <div class="input-group">
+                            <label for="group">Курс</label>
+                            <input type="text" name="group" id="group" placeholder="Группа">
+                        </div>
+                    </div>`
+
+                    for (let i = 0; i < questions.length; i++) {
+                        const q = questions[i];
+                        html += `<div class="question" id="q-${i}">`;
+                        html += `<p>${i + 1}. ${q.question}</p>`;
+                        html += `<ul class="options" id="options-${i}">`;
+
+                        for (let j = 0; j < q.options.length; j++) {
+                            html += `<li id="opt-${i}-${j}">`;
+                            html += `<input type="radio" name="q${i}" value="${j}" id="q${i}o${j}">`;
+                            html += `<label for="q${i}o${j}">${String.fromCharCode(65 + j)}. ${q.options[j]}</label>`;
+                            html += `</li>`;
+                        }
+
+                        html += `</ul></div>`;
+                    }
+
+                    document.getElementById('quiz-container').innerHTML = html;
+                    updateProgress();
+                }
+
+                // ==================== Подсветка ответов ====================
+                function highlightAnswers() {
+                    for (let i = 0; i < questions.length; i++) {
+                        const radios = document.getElementsByName(`q${i}`);
+                        const correctIndex = questions[i].correct;
+                        let userAnswer = -1;
+                        let isCorrect = false;
+
+                        for (let j = 0; j < radios.length; j++) {
+                            if (radios[j].checked) {
+                                userAnswer = parseInt(radios[j].value);
+                                isCorrect = (userAnswer === correctIndex);
+                                break;
+                            }
+                        }
+
+                        if (userAnswer !== -1) {
+                            const questionDiv = document.getElementById(`q-${i}`);
+                            const correctOption = document.getElementById(`opt-${i}-${correctIndex}`);
+
+                            if (isCorrect) {
+                                questionDiv.classList.add('correct-answer');
+                                correctOption.classList.add('correct-option');
+                            } else {
+                                questionDiv.classList.add('incorrect-answer');
+                                const userOption = document.getElementById(`opt-${i}-${userAnswer}`);
+                                if (userOption) {
+                                    userOption.classList.add('incorrect-option');
+                                }
+                                correctOption.classList.add('correct-option');
+                            }
+                        } else {
+                            const questionDiv = document.getElementById(`q-${i}`);
+                            questionDiv.classList.add('incorrect-answer');
+                            const correctOption = document.getElementById(`opt-${i}-${correctIndex}`);
+                            if (correctOption) {
+                                correctOption.classList.add('correct-option');
+                            }
+                        }
+                    }
+                }
+
+                // ==================== Обновление прогресса ====================
+                function updateProgress() {
+                    document.getElementById('progress').textContent = 'Раздел 1:';
+                    document.getElementById('questionCount').textContent = `0/${questions.length}`;
+                }
+
+                // ==================== Таймер ====================
+                function formatTime(seconds) {
+                    const mins = Math.floor(seconds / 60);
+                    const secs = seconds % 60;
+                    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+                }
+
+                function updateTimer() {
+                    const timerElement = document.getElementById('timer');
+                    timerElement.textContent = formatTime(timeLeft);
+
+                    if (timeLeft <= 120) {
+                        timerElement.classList.add('warning');
+                    }
+                    if (timeLeft <= 60) {
+                        timerElement.classList.remove('warning');
+                        timerElement.classList.add('danger');
+                    }
+
+                    if (timeLeft <= 0 && !testCompleted) {
+                        clearInterval(timerInterval);
+                        timerElement.textContent = '00:00';
+                        calculateScore(true);
+                    }
+                }
+
+                function startTimer() {
+                    timerInterval = setInterval(() => {
+                        if (!testCompleted) {
+                            timeLeft--;
+                            updateTimer();
+                        }
+                    }, 1000);
+                }
+
+                // ==================== Получение CSRF токена ====================
+                function getCookie(name) {
+                    let cookieValue = null;
+                    if (document.cookie && document.cookie !== '') {
+                        const cookies = document.cookie.split(';');
+                        for (let i = 0; i < cookies.length; i++) {
+                            const cookie = cookies[i].trim();
+                            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                                break;
+                            }
+                        }
+                    }
+                    return cookieValue;
+                }
+
+                // ==================== Подсчёт результата ====================
+                function getGrade(percentage) {
+                    if (percentage >= 90) return { text: 'ОТЛИЧНО', class: 'excellent', emoji: '🌟' };
+                    if (percentage >= 80) return { text: 'ХОРОШО', class: 'good', emoji: '👍' };
+                    if (percentage >= 60) return { text: 'УДОВЛЕТВОРИТЕЛЬНО', class: 'satisfactory', emoji: '📚' };
+                    return { text: 'НЕУДОВЛЕТВОРИТЕЛЬНО', class: 'unsatisfactory', emoji: '❌' };
+                }
+
+                function calculateScore(timeout = false) {
+                    if (testCompleted) return;
+
+                    let score = 0;
+                    let answeredCount = 0;
+
+                    for (let i = 0; i < questions.length; i++) {
+                        const radios = document.getElementsByName(`q${i}`);
+                        let answered = false;
+
+                        for (let j = 0; j < radios.length; j++) {
+                            if (radios[j].checked) {
+                                answered = true;
+                                if (parseInt(radios[j].value) === questions[i].correct) {
+                                    score++;
+                                }
+                                break;
+                            }
+                        }
+
+                        if (answered) answeredCount++;
+                    }
+
+                    document.getElementById('questionCount').textContent = `${answeredCount}/${questions.length}`;
+
+                    if (!timeout && answeredCount < questions.length) {
+                        const answer = confirm(`Вы ответили только на ${answeredCount} из ${questions.length} вопросов. Завершить тест досрочно?`);
+                        if (!answer) return;
+                    }
+
+                    highlightAnswers();
+
+                    const percentage = Math.round(score / questions.length * 100);
+                    const grade = getGrade(percentage);
+
+                    const resultDiv = document.getElementById('result');
+                    resultDiv.style.display = 'block';
+                    resultDiv.className = `result ${grade.class}`;
+                    resultDiv.innerHTML = `
+                        <h2>${timeout ? '⏰ Время вышло!' : '✅ Тест завершен!'}</h2>
+                        <div class="score">${score} из ${questions.length} (${percentage}%)</div>
+                        <div class="grade">${grade.emoji} ${grade.text}</div>
+                        <button onclick="saveTestResult(${score}, ${percentage})" class="btn save-btn">Сохранить результат</button>
+                    `;
+
+                    testCompleted = true;
+                    document.getElementById('submitBtn').disabled = true;
+                    clearInterval(timerInterval);
+                }
+
+                // ==================== Сохранение результатов теста (только ФИО и группа) ====================
+                function saveTestResult(score, percentage) {
+                    const fio = document.getElementById('fio').value.trim();
+                    const group = document.getElementById('group').value.trim();
+
+                    if (!fio || !group) {
+                        alert('Пожалуйста, заполните ФИО и группу');
+                        return;
+                    }
+
+                    const data = {
+                        name: fio,
+                        group: parseInt(group),
+                        answer: score
+                    };
+
+                    const csrftoken = getCookie('csrftoken');
+
+                    fetch('/api/save-test-result/', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': csrftoken
+                        },
+                        body: JSON.stringify(data)
+                    })
+                    .then(response => response.json())
+                    .then(result => {
+                        if (result.success) {
+                            // Сохраняем ID записи в localStorage для следующей страницы
+                            localStorage.setItem('personId', result.person_id);
+                            alert('Результат сохранен! ');
+                            document.querySelector('.save-btn').style.display = 'none';
+
+                            // Показываем ссылку на страницу с картой
+                            const resultDiv = document.getElementById('link_card_select');
+                            resultDiv.innerHTML += `
+                                <a href="main" class="btn card-link">Заполнить данные карты</a>
+                            `;
+                        } else {
+                            alert('Ошибка сохранения: ' + result.error);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Ошибка:', error);
+                        alert('Произошла ошибка при сохранении результатов');
+                    });
+                }
+
+                // ==================== Старт ====================
+                window.onload = function() {
+                    if (questions.length > 0) {
+                        renderQuiz();
+                        startTimer();
+                        updateProgress();
+                    } else {
+                        document.getElementById('quiz-container').innerHTML =
+                            '<div class="error">❌ Нет вопросов для теста</div>';
+                    }
+                };
+        </script>
+</body>
+
+</html>
