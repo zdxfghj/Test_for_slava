@@ -26,20 +26,21 @@ SECRET_KEY = 'django-insecure-i#_bxda53s1ok0k@l4=^0$7!8e&lwxzt!*i7my65()5+k=1ohf
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
 
 INSTALLED_APPS = [
-    'kibertest',
+    'django_filters',
+    'kibertest.apps.KibertestConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'corsheaders',
+    "rest_framework",
 ]
 
 MIDDLEWARE = [
@@ -50,9 +51,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
 ]
-CORS_ALLOW_ALL_ORIGINS = True
 ROOT_URLCONF = 'mysite.urls'
 
 TEMPLATES = [

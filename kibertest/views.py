@@ -1,14 +1,42 @@
 from django.shortcuts import render
 import os
 import json
-from .models import Person
+from .models import Person,Card
+from .serializers import PersonSerializer, CardSerializer
 from django.http import JsonResponse
 from django.conf import settings
 from django.shortcuts import render, get_object_or_404, redirect
 from .parser import parse_gift_file, get_random_questions
 from django.contrib.auth.decorators import login_required
-
+from django_filters.rest_framework import DjangoFilterBackend
 from django.views.decorators.http import require_POST
+from rest_framework import status, viewsets
+from rest_framework.response import Response
+from rest_framework import permissions
+
+
+class CardsViewSet(viewsets.ModelViewSet):
+    permission_classes = [permissions.AllowAny]
+    queryset = Card.objects.all()
+    serializer_class = CardSerializer
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['number']
+
+    def destroy(self, request, *args, **kwargs):
+        serializer = self.get_serializer(self.get_object())
+        super().destroy(request, *args, **kwargs)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class PersonViewSet(viewsets.ModelViewSet):
+    permission_classes = [permissions.AllowAny]
+    queryset = Person.objects.all()
+    serializer_class = PersonSerializer
+
+    def destroy(self, request, *args, **kwargs):
+        serializer = self.get_serializer(self.get_object())
+        super().destroy(request, *args, **kwargs)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 def index(request):
@@ -25,17 +53,23 @@ def index(request):
 
 
 def main(request):
-
-    return render(request, 'kibertest/main.html')
+    if 'lastname' in request.GET:
+        lastname = request.GET.get('lastname')
+    if 'year' in request.GET:
+        year = request.GET.get('year')
+    result = Person.objects.filter(name=lastname,year=year)
+    if result.count() > 0:
+        first = result.first()
+        first.wentToLink = True
+        first.save()
+    return render(request, 'kibertest/main.html', )
 
 
 def auth(request):
-    print(request.user)
     return render(request, 'kibertest/auth.html')
 
 @login_required
 def search(request):
-    print(request.user)
     return render(request, 'kibertest/search.html')
 
 
