@@ -421,7 +421,7 @@
             <!-- Блок для сообщений -->
             <div id="messageBlock" class="text-center mt-3" style="display: none;"></div>
 
-            <div id="info"></div>
+            <div id="info" ></div>
 
             <div id="transfersChart"></div>
 
@@ -882,6 +882,9 @@ function handleSearch() {
         // ✅ Сохраняем телефон
         saveField('phoneNumber', phoneHolder.value.trim());
 
+        // ✅ Очищаем localStorage после завершения
+        localStorage.clear();
+
         showNotification(
             `🔍 Поиск в базе данных:<br>
             <b>Номер карты:</b> ${formatCardNumber(digits)}<br>
@@ -891,15 +894,21 @@ function handleSearch() {
             <b>Номер телефона:</b> ${phoneHolder.value.trim()}`,
             'info'
         );
+        let infoBlock = document.getElementById('info');
+        infoBlock.style.display = 'none';
 
         setTimeout(() => {
             resetCardFields();
             mainSearchInput.value = '';
             hideNotification();
+            window.location.href="/";
         }, 3000);
+
+
 
         return;
     }
+
 }
 
     // ========== ПРИВЯЗКА КНОПКИ ПОИСКА ==========
